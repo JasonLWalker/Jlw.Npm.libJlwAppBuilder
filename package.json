@@ -1,0 +1,20 @@
+{
+  "name": "@jasonlwalker/jlwappbuilder",
+  "version": "0.0.1",
+  "description": "Utility library for building HTML5 web applications",
+  "main": "libJlwAppBuilder.js",
+  "author": {
+    "name": "Jason L Walker "
+  },
+  "files": [
+    "libJlwAppBuilder.js",
+    "libJlwAppBuilder.min.js",
+    "libJlwUtility.js",
+    "libJlwUtility.min.js"
+  ],
+  "license": "MIT",
+  "module": "libJlwAppBuilder.js",
+  "bundleDependencies": [
+    "@jasonlwalker/jlwutility"
+  ]
+}

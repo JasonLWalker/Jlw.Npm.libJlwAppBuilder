@@ -1,0 +1,14 @@
+[
+  {
+    "outputFileName": "libJlwAppBuilder.min.js",
+    "inputFiles": [
+      "libJlwAppBuilder.js"
+    ]
+  },
+  {
+    "outputFileName": "libJlwUtility.min.js",
+    "inputFiles": [
+      "libJlwUtility.js"
+    ]
+  }
+]
