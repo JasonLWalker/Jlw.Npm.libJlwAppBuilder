@@ -1,0 +1,57 @@
+# This is a basic workflow that is manually triggered
+
+name: Generate Release
+
+# Controls when the action will run. Workflow runs when manually triggered using the UI
+# or API.
+on:
+  workflow_dispatch:
+    #    required: false
+
+jobs:
+  build:
+    name: Create Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup Node.Js
+        uses: actions/setup-node@v1
+        with:
+          node-version: '10.x'
+          scope: jasonlwalker
+          user: jasonlwalker
+          access: public 
+          registry-url: 'https://registry.npmjs.org'
+         
+      - run: npm install --global np
+         
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Configure Git user
+        run: |
+             git config --global user.email "jason@draxjinn.com"
+             git config --global user.name "Jason Walker"
+        
+#      - name: npm login
+#        run: npm login
+
+      - name: Bump Version
+        run: np patch --no-publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        
+      - name: Publish to npm
+        run: npm publish --access public
+        env:
+            NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Configure Node.Js
+        uses: actions/setup-node@v1
+        with:
+          registry-url: 'https://npm.pkg.github.com'
+          scope: 'jasonlwalker'
+      
+      - name: Publish to GPR
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GPR_TOKEN }}        
