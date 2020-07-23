@@ -1,6 +1,6 @@
 {
   "name": "@jasonlwalker/jlwappbuilder",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "Utility library for building HTML5 web applications",
   "main": "libJlwAppBuilder.js",
   "author": {
