@@ -35,19 +35,19 @@ jobs:
 #      - name: npm login
 #        run: npm login
 
-      - name: Bump Version
-        run: np patch --no-publish
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-        
       - name: Clean up package before publish
         run: |
              npm update
              cp ./node_modules/@${{ secrets.NPM_USER }}/jlwutility/*.js ./
              rm -rf ./node_modules
              git add .
-             git commit -m "updated jlwUtility script from npm"
+             git commit -a -m "updated jlwUtility script from npm" --allow-empty
              
+      - name: Bump Version
+        run: np patch --no-publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        
       - name: Publish to npm
         run: npm publish --access public
         env:
