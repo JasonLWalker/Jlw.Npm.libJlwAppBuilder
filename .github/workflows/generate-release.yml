@@ -42,7 +42,7 @@ jobs:
         
       - name: Clean up package before publish
         run: |
-             cp './node_modules/@${{ secrets.NPM_USER }}/jlwutility/*.js ./'
+             cp './node_modules/@${{ secrets.NPM_USER }}/jlwutility/*.js' ./
              rm -rf ./node_modules
              
       - name: Publish to npm
