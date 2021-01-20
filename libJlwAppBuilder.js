@@ -43,7 +43,8 @@ function libJlwAppBuilder(sUrlRoot, sDtSelector, parentLib) {
     t.initWysiwyg = initWysiwyg;
     t.optionsWysiwyg = {};
     t.parentLib = parentLib;
-
+    t.redrawType = "full-hold";
+    t.redrawTable = fnRedrawTable;
     return t;
     
     function fnNull() {
@@ -56,11 +57,11 @@ function libJlwAppBuilder(sUrlRoot, sDtSelector, parentLib) {
     function fnRedrawTable() {
         t.hidePleaseWait();
         if (t.dt) {
-            t.dt.draw();
+            t.dt.draw(t.redrawType);
         }
 
         if (t.parentLib && t.parentLib.dt && typeof(t.parentLib.dt.draw) === 'function') {
-            t.parentLib.dt.draw();
+            t.parentLib.dt.draw(t.redrawType);
         }
     }
 
@@ -118,7 +119,7 @@ function libJlwAppBuilder(sUrlRoot, sDtSelector, parentLib) {
         function fnDlgCallback(result) {
             if (result) {
                 t.showPleaseWait();
-                t.post(sUrlRoot + "Delete", oData, fnOnSuccessCallback).always(fnRedrawTable);
+                t.post(sUrlRoot + "Delete", oData, fnOnSuccessCallback).always(t.redrawTable);
             }
         }
         oData.EditToken = 'Edit';
@@ -168,7 +169,7 @@ function libJlwAppBuilder(sUrlRoot, sDtSelector, parentLib) {
 
                 destroyWysiwyg(oDlg);
                 oDlg.modal('hide');
-            }).always(fnRedrawTable);
+            }).always(t.redrawTable);
         return false;
     }
 
@@ -185,7 +186,7 @@ function libJlwAppBuilder(sUrlRoot, sDtSelector, parentLib) {
 
                 destroyWysiwyg(oDlg);
                 oDlg.modal('hide');
-            }).always(fnRedrawTable);
+            }).always(t.redrawTable);
         return false;
     }
 
