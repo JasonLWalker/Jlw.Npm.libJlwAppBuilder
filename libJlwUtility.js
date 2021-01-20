@@ -27,7 +27,8 @@ function libJlwUtility(initOptions) {
         t.serializeFormToJson = serializeFormToJson;
         t.messageTypes = messageTypes;
         t.formatDateString = formatDateString;
-        t.zeroPad = zeroPad;
+		t.zeroPad = zeroPad;
+        t.redrawDataTableType = "full-hold";
         t.redrawDataTable = redrawDataTable;
         t.showNotification = _showNotification;
         t.lazyLoadLibrary = lazyLoadLibrary;
@@ -247,9 +248,11 @@ function libJlwUtility(initOptions) {
 			}
 		}
 
+		/*
         data["Message"] = data["Message"] || data["message"];
         data["Title"] = data["Title"] || data["title"];
         data["MessageType"] = data["MessageType"] || data["messageType"];
+		*/
 
         if (!data || (!data["ExceptionType"] && !data["Message"]))
 			return false;
@@ -433,7 +436,7 @@ function libJlwUtility(initOptions) {
 				try {
 					var id = jQuery(o).prop("id");
 					var dt = jQuery("#" + id).DataTable();
-					dt.draw();
+					dt.draw(t.redrawDataTableType);
 				} catch (ex) {}
 			});
 	}
