@@ -39,7 +39,7 @@ function libJlwUtility(initOptions) {
 		t.promiseInitFontAwesome = lazyLoadLibrary(window.FontAwesome, libPaths["FontAwesome"]);
         t.promiseInitBootstrap = lazyLoadLibrary(window.bootbox, libPaths["Bootbox"]);
         t.promiseInitToastr = lazyLoadLibrary(window.toastr, libPaths["Toastr"]);
-        pleaseWaitDiv = jQuery('<div class="modal fade jlwPleaseWait" data-backdrop="static" tabindex="-1" role="dialog"><div class="modal-dialog" role="document"><div class="modal-content"><div class="modal-body"><div class="text-center"><div class="progress"><div class="progress-bar progress-bar-striped progress-bar-info progress-bar-animated" role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 100%"></div></div><h4><span>Processing... </span> <button type="button" class="close" style="float: none;" data-dismiss="modal" aria-hidden="true"><small>x</small></button></h4></div></div></div></div></div>');
+		pleaseWaitDiv = jQuery('<div class="modal fade jlwPleaseWait" data-backdrop="static" tabindex="-1" role="dialog"><div class="modal-dialog modal-dialog-centered" role="document"><div class="modal-content"><div class="modal-body"><div class="text-center"><div class="progress"><div class="progress-bar progress-bar-striped progress-bar-info progress-bar-animated" role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 100%"></div></div><h4><span>Processing... </span> <button type="button" class="close" style="float: none;" data-dismiss="modal" aria-hidden="true"><small>x</small></button></h4></div></div></div></div></div>');
         fireCallback(t.init);
         fireCallback(initOptions["fnInit"]);
     }
@@ -185,14 +185,20 @@ function libJlwUtility(initOptions) {
 	function _showNotification(title, msg, type, redirectUrl) {
 
 	    function fnAlert(title, msg, redirectUrl) {
-	        bootbox.alert({
-	            title: title,
-	            message: msg,
-	            callback: function () {
-	                if (redirectUrl)
-	                    window.location.replace(redirectUrl);
-	            }
-	        });
+		if (window.bootbox) {
+			bootbox.alert({
+			    title: title,
+			    message: msg,
+			    callback: function() {
+				if (redirectUrl)
+				    window.location.replace(redirectUrl);
+			    }
+			});
+		    } else {
+					window.alert(msg);
+			if (redirectUrl)
+			    window.location.replace(redirectUrl);
+		    }
 	    }
 
 	    if (type == null)
@@ -231,19 +237,39 @@ function libJlwUtility(initOptions) {
 	}
 
 	function _checkAjaxMessage(data, textStatus, jqXhr) {
-		if (!data || (!data["ExceptionType"] && !data["Message"]))
-			return false;
+		if (jqXhr && jqXhr["status"] === 401 && jqXhr["getResponseHeader"]) {
+			// jqXhr is only populated on fail
+			var loc = jqXhr.getResponseHeader("location");
+			if (loc) {
+				loc = loc.replace(/ReturnUrl=[\w\W]*$/i,'ReturnUrl='+encodeURIComponent(window.location.pathname));
+				fnAlert("Not Logged In", "Either you have not completely logged in or your session has expired. Please log in and try again.", loc);
+				return false;
+			}
+		}
 
+        data["Message"] = data["Message"] || data["message"];
+        data["Title"] = data["Title"] || data["title"];
+        data["MessageType"] = data["MessageType"] || data["messageType"];
+
+        if (!data || (!data["ExceptionType"] && !data["Message"]))
+			return false;
+		
 		function fnAlert(title, msg, redirectUrl) {
+		    if (window.bootbox) {
 			var o = bootbox.alert({
-				title: title,
-				message: msg,
-				callback: function () {
-					if (redirectUrl)
-						window.location.replace(redirectUrl);
-				}
+			    title: title,
+			    message: msg,
+			    callback: function() {
+				if (redirectUrl)
+				    window.location.replace(redirectUrl);
+			    }
 			});
 			setModalOnTop(o);
+		    } else {
+			window.alert(msg);
+			if (redirectUrl)
+			    window.location.replace(redirectUrl);
+		    }
 		}
 
 		if (data["ExceptionType"]) {
@@ -251,10 +277,6 @@ function libJlwUtility(initOptions) {
 				case "invalidloginexception":
 					hidePleaseWait();
 					fnAlert("Not Logged In", "Either you have not completely logged in or your session has expired. Please log in and try again.", baseUrl);
-					return true;
-				case "invalidstudentexception":
-					hidePleaseWait();
-					fnAlert("Invalid Student", "Either the student is invalid, or no student is currently active. Please select another student and try again.", baseUrl + "ChooseStudent");
 					return true;
 				case "invalidtokenexception":
 					hidePleaseWait();
@@ -268,29 +290,39 @@ function libJlwUtility(initOptions) {
 					toastr.error(data["ExceptionMessage"], data["Message"]);
 					return true;
 				default:
-					toastr.error(data["ExceptionMessage"], data["Message"]);
+					//toastr.error(data["ExceptionMessage"], data["Message"]);
+					//return true;
+					data["Title"] = data["Message"];
+					data["Message"] = data["ExceptionMessage"];
+					break;
 			}
 		}
 		if (data["MessageType"] != null && data["MessageType"].toString()) {
 
-			switch (data["MessageType"].toString()) {
-				case messageTypes.Success:
+			switch (data["MessageType"].toString().toLowerCase()) {
+				case "success":
+                case messageTypes.Success:
 					toastr.success(data["Message"], data["Title"]);
 					break;
-				case messageTypes.Info:
+                case "info":
+                case messageTypes.Info:
 					toastr.info(data["Message"], data["Title"]);
 					break;
+                case "warning":
 				case messageTypes.Warning:
 					toastr.warning(data["Message"], data["Title"]);
 					break;
+                case "danger":
 				case messageTypes.Danger:
 					toastr.error(data["Message"], data["Title"]);
 					break;
+                case "redirect":
 				case messageTypes.Redirect:
 					hidePleaseWait();
 					fnAlert(data["Title"], data["Message"], data["RedirectUrl"]);
 					break;
-				case messageTypes.Alert:
+				case "alert":
+                case messageTypes.Alert:
 					hidePleaseWait();
 					fnAlert(data["Title"], data["Message"]);
 					break;
