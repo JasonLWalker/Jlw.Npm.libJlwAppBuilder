@@ -11,7 +11,7 @@ function libJlwUtility(initOptions) {
 	var t = this;
 
     initOptions = initOptions || {};
-
+	
     function initLibrary() {
         var libPaths = initOptions["libPaths"] || {};
 
@@ -31,7 +31,7 @@ function libJlwUtility(initOptions) {
         t.redrawDataTableType = "full-hold";
         t.redrawDataTable = redrawDataTable;
         t.showNotification = _showNotification;
-        t.lazyLoadLibrary = lazyLoadLibrary;
+		t.lazyLoadLibrary = lazyLoadLibrary;
 
         var bs = (window.bootstrap && window.bootstrap['modal']);
 
@@ -404,7 +404,6 @@ function libJlwUtility(initOptions) {
 		o = jQuery("select", oFrm).val("");
 		o = jQuery("textarea", oFrm).val("");
 		o = jQuery("input[type=checkbox]", oFrm).val("1").prop("checked", false);
-//            console.log(oData);
 		// Populate Form Fields
 		for (var i in oData) {
 			o = jQuery("input[name=" + i + "]", oFrm);
@@ -417,7 +416,6 @@ function libJlwUtility(initOptions) {
 
 			if (o[0]) {
 				if (o.prop('type') == 'checkbox') {
-//                        console.log();
 					o.prop("checked", oData[i]);
 					o.data('origValue', o.val());
 				} else {
