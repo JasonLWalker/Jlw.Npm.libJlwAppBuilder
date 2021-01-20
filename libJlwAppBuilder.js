@@ -1,5 +1,10 @@
-function libJlwAppBuilder(sUrlRoot, sDtSelector, parentLib) {
-    var t = new libJlwUtility();
+function libJlwAppBuilder(sUrlRoot, sDtSelector, parentLib, jlwUtility, $, moment, tinyMce) {
+    jlwUtility = jlwUtility || window.libJlwUtility;
+    $ = $ || window.jQuery;
+    moment = moment || window.moment;
+    tinyMce = tinyMce || window.tinyMCE;
+
+    var t = new jlwUtility();
 
     var aRowButtons = [];
     var aTableFooterButtons = [];
@@ -20,6 +25,7 @@ function libJlwAppBuilder(sUrlRoot, sDtSelector, parentLib) {
     t.onDeleteRecord = onDeleteRecord;
     t.showDialog = showDialog;
     t.onSave = onSave;
+    t.onSaveNew = onSaveNew;
 
     t.dt = null;
     t.addDtRowButton = addDtRowButton;
@@ -41,6 +47,7 @@ function libJlwAppBuilder(sUrlRoot, sDtSelector, parentLib) {
     t.getButton = getButton;
     t.initPopup = initPopup;
     t.initWysiwyg = initWysiwyg;
+    t.destroyWysiwyg = destroyWysiwyg;
     t.optionsWysiwyg = {};
     t.parentLib = parentLib;
     t.redrawType = "full-hold";
@@ -64,8 +71,6 @@ function libJlwAppBuilder(sUrlRoot, sDtSelector, parentLib) {
             t.parentLib.dt.draw(t.redrawType);
         }
     }
-
-
 
     function initializeDataTable(sSelector, oOpt) {
         if (!sSelector)
@@ -100,11 +105,11 @@ function libJlwAppBuilder(sUrlRoot, sDtSelector, parentLib) {
         t.showPleaseWait();
         var oData = t.getParentData(oBtn);
         oData.EditToken = "Show";
-        t.post(sUrlRoot + "Data", oData,
+        t.post(t.sUrlRoot + "Data", oData,
             function (o) {
                 t.hidePleaseWait();
                 window.setTimeout(function () {
-                    var oFrm = showDialog(o, t.frmDisplay, "View Record");
+                    var oFrm = t.showDialog(o, t.frmDisplay, "View Record");
 
                     if (typeof fnOnShow === "function") {
                         fnOnShow(oFrm, o);
@@ -114,12 +119,12 @@ function libJlwAppBuilder(sUrlRoot, sDtSelector, parentLib) {
     }
 
     function onDeleteRecord(oBtn) {
-        var oData = getParentData(oBtn);
+        var oData = t.getParentData(oBtn);
         function fnOnSuccessCallback(o) { return true; }
         function fnDlgCallback(result) {
             if (result) {
                 t.showPleaseWait();
-                t.post(sUrlRoot + "Delete", oData, fnOnSuccessCallback).always(t.redrawTable);
+                t.post(t.sUrlRoot + "Delete", oData, fnOnSuccessCallback).always(t.redrawTable);
             }
         }
         oData.EditToken = 'Edit';
@@ -128,15 +133,15 @@ function libJlwAppBuilder(sUrlRoot, sDtSelector, parentLib) {
     }
 
     function onEditRecord(oBtn, fnOnShow) {
-        var oData = getParentData(oBtn);
+        var oData = t.getParentData(oBtn);
         t.showPleaseWait(); oData.EditToken = "Edit"; var oFrm = null;
-        function fnDlgCallback(result) { return onSave(oFrm); }
+        function fnDlgCallback(result) { return t.onSave(oFrm); }
         function onSuccessCallback(o) {
             t.hidePleaseWait();
 
             window.setTimeout(
                 function () {
-                    oFrm = showDialog(
+                    oFrm = t.showDialog(
                         o,
                         t.frmEdit,
                         "Edit Record",
@@ -153,21 +158,21 @@ function libJlwAppBuilder(sUrlRoot, sDtSelector, parentLib) {
                     }
                 }, 500);
         }
-        t.post(sUrlRoot + "Data", oData, onSuccessCallback);
+        t.post(t.sUrlRoot + "Data", oData, onSuccessCallback);
     }
 
     function onSave(oDlg) {
         t.showPleaseWait("Saving Data...");
 
         t.post(
-            sUrlRoot + "Save",
+            t.sUrlRoot + "Save",
             t.serializeFormToJson(oDlg),
             function (o) {
                 t.hidePleaseWait();
                 if (o["MessageType"] != t.messageTypes.Success)
                     return false;
 
-                destroyWysiwyg(oDlg);
+                t.destroyWysiwyg(oDlg);
                 oDlg.modal('hide');
             }).always(t.redrawTable);
         return false;
@@ -177,14 +182,14 @@ function libJlwAppBuilder(sUrlRoot, sDtSelector, parentLib) {
         t.showPleaseWait("Saving Data...");
 
         t.post(
-            sUrlRoot + "Save",
+            t.sUrlRoot + "Save",
             t.serializeFormToJson(oDlg),
             function (o) {
                 t.hidePleaseWait();
                 if (o["MessageType"] != t.messageTypes.Success)
                     return false;
 
-                destroyWysiwyg(oDlg);
+                t.destroyWysiwyg(oDlg);
                 oDlg.modal('hide');
             }).always(t.redrawTable);
         return false;
@@ -192,11 +197,11 @@ function libJlwAppBuilder(sUrlRoot, sDtSelector, parentLib) {
 
     function onAddRecord(fnOnShow) {
         window.setTimeout(function () {
-            var oFrm = showDialog({}, t.frmEdit, "Add Record", {
+            var oFrm = t.showDialog({}, t.frmEdit, "Add Record", {
                 "yes": {
                     label: '<div class="text-left"><i class="fas fa-check-circle"></i> Add Record</div>',
                     className: 'btn btn-outline-success pull-left jlw-update',
-                    callback: function () { return onSaveNew(oFrm); }
+                    callback: function () { return t.onSaveNew(oFrm); }
                 }
             });
 
@@ -224,18 +229,16 @@ function libJlwAppBuilder(sUrlRoot, sDtSelector, parentLib) {
     }
 
     function addDtRowButton(sLabel, sBtnClass, sIconClass, sSkin, fnCallback) {
-        aRowButtons.push(getButtonDefinition(sLabel, sBtnClass, sIconClass, sSkin, fnCallback));
+        aRowButtons.push(t.getButtonDefinition(sLabel, sBtnClass, sIconClass, sSkin, fnCallback));
     }
 
     function addDtFooterButton(sLabel, sBtnClass, sIconClass, sSkin, fnCallback) {
-        aTableFooterButtons.push(getButtonDefinition(sLabel, sBtnClass, sIconClass, sSkin, fnCallback));
+        aTableFooterButtons.push(t.getButtonDefinition(sLabel, sBtnClass, sIconClass, sSkin, fnCallback));
     }
 
     function addDtRenderer(fn, cols) {
         t.aDtRenderers.push({ 'render': fn, 'targets': cols });
     }
-
-
 
     function getButtonDefinition(sLabel, sBtnClass, sIconClass, sSkin, fnCallback) {
         return {
@@ -298,7 +301,7 @@ function libJlwAppBuilder(sUrlRoot, sDtSelector, parentLib) {
     }
 
     function initWysiwyg(oFrm) {
-        if (window.tinyMCE) {
+        if (tinyMce) {
             var options = {
                 'selector':".modal-body textarea.jlw-wysiwyg",
                 'init_instance_callback' : function(o) {
@@ -306,7 +309,7 @@ function libJlwAppBuilder(sUrlRoot, sDtSelector, parentLib) {
                 },
                 'setup': function (editor) {
                     editor.on('change', function () {
-                        tinymce.triggerSave();
+                        tinyMce.triggerSave();
                     });
                 }
             };
@@ -315,12 +318,15 @@ function libJlwAppBuilder(sUrlRoot, sDtSelector, parentLib) {
                 $.extend(options, t.optionsWysiwyg);
             }
 
-            destroyWysiwyg(oFrm);
-            tinyMCE.init(options);
+            t.destroyWysiwyg(oFrm);
+            tinyMce.init(options);
         }
     }
 
     function destroyWysiwyg(oFrm) {
+        if (!tinyMce)
+            return; 
+
         $(".jlw-wysiwyg", oFrm).each(function() {
             var t = $(this).data("jlwWysiwyg");
             if (t && t.destroy)
@@ -329,7 +335,7 @@ function libJlwAppBuilder(sUrlRoot, sDtSelector, parentLib) {
     }
 
     function showDialog(oData, frmEdit, sTitle, btns) {
-        var onClose = function(o) { destroyWysiwyg($(o.delegateTarget)); };
+        var onClose = function(o) { t.destroyWysiwyg($(o.delegateTarget)); };
         if (!btns) { btns = {}; }
         if (!btns["no"]) { btns['no'] = { label: '<div class="text-left"><i class="fas fa-arrow-left"></i> Close</div>', className: 'btn btn-outline-danger', callback: onClose }; }
         var oFrm = bootbox.dialog({ title: sTitle, message: frmEdit, onEscape: onClose, size: "large", buttons: btns });
