@@ -419,9 +419,10 @@ function libJlwUtility(initOptions) {
 					o.prop("checked", oData[i]);
 					o.data('origValue', o.val());
 				} else if (o.prop('type') == 'radio') {
+					s = (oData[i] ? oData[i].toString() : '');
                     o.each(function (i, elem) {
-                        var o = jQuery(elem);
-						o.prop("checked", o.val() == oData[i]);
+                        var rdo = jQuery(elem);
+						rdo.prop("checked", rdo.val() == s);
                     });
                 } else {
 					s = (oData[i] ? oData[i].toString() : '');
