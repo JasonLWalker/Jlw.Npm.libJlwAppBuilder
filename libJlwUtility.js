@@ -418,7 +418,13 @@ function libJlwUtility(initOptions) {
 				if (o.prop('type') == 'checkbox') {
 					o.prop("checked", oData[i]);
 					o.data('origValue', o.val());
-				} else {
+				} else if (o.prop('type') == 'radio') {
+                    o.each(function (i, elem) {
+                        var o = jQuery(elem);
+						o.prop("checked", o.val() == oData[i]);
+                    });
+                } else {
+                    else {
 					s = (oData[i] ? oData[i].toString() : '');
 					o.val(s.trim());
 					o.data('origValue', o.val());
