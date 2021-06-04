@@ -424,7 +424,6 @@ function libJlwUtility(initOptions) {
 						o.prop("checked", o.val() == oData[i]);
                     });
                 } else {
-                    else {
 					s = (oData[i] ? oData[i].toString() : '');
 					o.val(s.trim());
 					o.data('origValue', o.val());
