@@ -29,20 +29,18 @@
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <ItemGroup>
-    <None Include="bundleconfig.json" />
-    <Content Include="libJlwAppBuilder.js" />
     <Content Include="libJlwUtility.js" />
+    <Content Include="libJlwUtility.min.js" />
     <Content Include="package.json" />
     <Content Include="README.md" />
+    <None Include="bundleconfig.json" />
+    <Content Include="libJlwAppBuilder.js" />
+    <Content Include="libman.json" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="libJlwAppBuilder.min.js">
       <SubType>Code</SubType>
       <DependentUpon>libJlwAppBuilder.js</DependentUpon>
-    </Compile>
-    <Compile Include="libJlwUtility.min.js">
-      <SubType>Code</SubType>
-      <DependentUpon>libJlwUtility.js</DependentUpon>
     </Compile>
   </ItemGroup>
   <Import Project="$(VSToolsPath)\Node.js Tools\Microsoft.NodejsToolsV2.targets" />

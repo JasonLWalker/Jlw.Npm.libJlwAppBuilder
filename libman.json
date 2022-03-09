@@ -1,0 +1,15 @@
+{
+  "version": "1.0",
+  "defaultProvider": "cdnjs",
+  "libraries": [
+    {
+      "provider": "jsdelivr",
+      "library": "@jasonlwalker/jlwutility@0.0.34",
+      "destination": "./",
+      "files": [
+        "libJlwUtility.js",
+        "libJlwUtility.min.js"
+      ]
+    }
+  ]
+}

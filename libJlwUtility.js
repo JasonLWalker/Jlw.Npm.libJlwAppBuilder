@@ -116,8 +116,8 @@ function libJlwUtility(initOptions) {
 		// Temporarily remove disabled properties so that values can be serialized.
 		a.each(function (i, elem) {
 			var o = jQuery(elem);
-			o.data['jlwIsDisabled'] = o.prop("disabled");
-			o.prop("disabled", false);
+			o.data('jlwIsDisabled', o.prop("disabled"));
+			o.attr("disabled", false);
 		});
 
 		var frmData = a.serializeArray();
@@ -130,7 +130,7 @@ function libJlwUtility(initOptions) {
 		// Re-enable disabled properties if set
 		a.each(function (i, elem) {
 			var o = jQuery(elem);
-			o.prop("disabled", o.data['jlwIsDisabled']);
+			o.prop("disabled", o.data('jlwIsDisabled'));
 		});
 
 		return data;
