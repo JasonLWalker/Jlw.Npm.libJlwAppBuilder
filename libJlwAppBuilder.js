@@ -1,10 +1,12 @@
-function libJlwAppBuilder(sUrlRoot, sDtSelector, parentLib, jlwUtility, $, moment, tinyMce) {
+function libJlwAppBuilder(sUrlRoot, sDtSelector, parentLib, jlwUtility, $, moment, tinyMce, bootbox, toastr) {
     jlwUtility = jlwUtility || window.libJlwUtility;
     $ = $ || window.jQuery;
     moment = moment || window.moment;
     tinyMce = tinyMce || window.tinyMCE;
+    bootbox = bootbox || window.bootbox;
+    toastr = toastr || window.toastr;
 
-    var t = new jlwUtility();
+    var t = new jlwUtility({}, $);
 
     var aRowButtons = [];
     var aTableFooterButtons = [];
@@ -34,16 +36,16 @@ function libJlwAppBuilder(sUrlRoot, sDtSelector, parentLib, jlwUtility, $, momen
 
     t.dtOrder = [[0, "asc"]];
     t.initializeDataTable = initializeDataTable;
+    t.fnNull = t.fnNull || _fnNull;
 
-    t.fnPostDtAjaxData = fnNull;
-    t.fnNull = fnNull;
+    t.fnPostDtAjaxData = t.fnPostDtAjaxData || t.fnNull;
     t.fnNotImplemented = fnNotImplemented;
 
     t.dtRenderDate = dtRenderDate;
     t.dtRenderButtons = dtRenderButtons;
     t.dtRenderFooterButtons = dtRenderFooterButtons;
     t.dtOnDraw = dtOnDraw;
-    t.dtOnPreDraw = fnNull;
+    t.dtOnPreDraw = t.dtOnPreDraw || t.fnNull;
     t.getButton = getButton;
     t.initPopup = initPopup;
     t.initWysiwyg = initWysiwyg;
@@ -54,7 +56,7 @@ function libJlwAppBuilder(sUrlRoot, sDtSelector, parentLib, jlwUtility, $, momen
     t.redrawTable = fnRedrawTable;
     return t;
     
-    function fnNull() {
+    function _fnNull() {
     }
 
     function fnNotImplemented() {
@@ -246,7 +248,7 @@ function libJlwAppBuilder(sUrlRoot, sDtSelector, parentLib, jlwUtility, $, momen
             'class': sBtnClass ? sBtnClass : "",
             'icon': sIconClass ? sIconClass : "",
             'skin': sSkin ? sSkin : "btn-outline-secondary",
-            'callback': typeof fnCallback == "function" ? fnCallback : fnNull
+            'callback': typeof fnCallback == "function" ? fnCallback : t.fnNull
         };
     }
 
@@ -279,7 +281,7 @@ function libJlwAppBuilder(sUrlRoot, sDtSelector, parentLib, jlwUtility, $, momen
             var fn = o.callback;
             return function() { fn(this); };
         }
-        return fnNull;
+        return t.fnNull;
     }
 
     function dtOnDraw(e) {
