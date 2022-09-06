@@ -4,7 +4,7 @@
   "libraries": [
     {
       "provider": "jsdelivr",
-      "library": "@jasonlwalker/jlwutility@1.1.4",
+      "library": "@jasonlwalker/jlwutility@1.1.5",
       "destination": "./",
       "files": [
         "libJlwUtility.js",
