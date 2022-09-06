@@ -8,11 +8,13 @@ function libJlwUtility(initOptions, $) {
 		Alert: "4",
 		Redirect: "5"
 	};
-	var t = initOptions.this || this;
+	var t = initOptions['this'] || this;
 	$ = $ || window.jQuery;
 
+    t.fireCallback = t.fireCallback || _fireCallback;
+
     initOptions = initOptions || {};
-	
+
     function initLibrary() {
         var libPaths = initOptions["libPaths"] || {};
 
@@ -39,7 +41,6 @@ function libJlwUtility(initOptions, $) {
 		t.redrawDataTable = t.redrawDataTable || _redrawDataTable;
 		t.showNotification = t.showNotification || _showNotification;
 		t.lazyLoadLibrary = t.lazyLoadLibrary || _lazyLoadLibrary;
-		t.fireCallback = t.fireCallback || _fireCallback;
 		t.getHighestZIndex = t.getHighestZIndex || _getHighestZIndex;
 		t.serializeMultipleFieldCallback = t.serializeMultipleFieldCallback || _fnSerializeMultipleFieldCallback;
 
@@ -49,7 +50,6 @@ function libJlwUtility(initOptions, $) {
 		t.promiseInitFontAwesome = t.lazyLoadLibrary(window.FontAwesome, libPaths["FontAwesome"]);
         t.promiseInitBootstrap = t.lazyLoadLibrary(window.bootbox, libPaths["Bootbox"]);
 		t.promiseInitToastr = t.lazyLoadLibrary(window.toastr, libPaths["Toastr"]);
-
         t.fireCallback(t.init);
         t.fireCallback(initOptions["fnInit"]);
     }
@@ -75,12 +75,6 @@ function libJlwUtility(initOptions, $) {
         }
     }
 
-	function _fireCallback(fnCb) {
-		if (typeof fnCb == 'function') {
-            fnCb();
-        }
-    }
-
 	function _lazyLoadLibrary(libToCheck, libPath) {
         if (libToCheck)
             return $.Deferred().resolve;
@@ -91,6 +85,11 @@ function libJlwUtility(initOptions, $) {
         return $.Deferred().fail();
     }
 
+    function _fireCallback(fnCb) {
+        if (typeof fnCb == 'function') {
+            fnCb();
+        }
+    }
 
 	function init(fnCb) {
         initJquery(fnCb);
