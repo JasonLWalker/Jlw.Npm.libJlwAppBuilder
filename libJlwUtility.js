@@ -49,6 +49,7 @@ function libJlwUtility(initOptions, $) {
 		t.promiseInitFontAwesome = t.lazyLoadLibrary(window.FontAwesome, libPaths["FontAwesome"]);
         t.promiseInitBootstrap = t.lazyLoadLibrary(window.bootbox, libPaths["Bootbox"]);
 		t.promiseInitToastr = t.lazyLoadLibrary(window.toastr, libPaths["Toastr"]);
+
         t.fireCallback(t.init);
         t.fireCallback(initOptions["fnInit"]);
     }
@@ -63,14 +64,14 @@ function libJlwUtility(initOptions, $) {
             jqTag.src = libPaths["jQuery"];
             jqTag.onload = function() {
                 t.promiseInitJquery = $.Deferred().resolve();
-                fireCallback(fnCb);
+                t.fireCallback(fnCb);
             };
             headTag.appendChild(jqTag);
         } else {
             if (typeof $ != 'undefined') {
                 t.promiseInitJquery = $.Deferred().resolve();
             }
-            fireCallback(fnCb);
+            t.fireCallback(fnCb);
         }
     }
 
