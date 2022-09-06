@@ -8,12 +8,14 @@ function libJlwUtility(initOptions, $) {
 		Alert: "4",
 		Redirect: "5"
 	};
-	var t = initOptions['this'] || this;
+
+	initOptions = initOptions || {};
+
+	var t = initOptions.this || this;
 	$ = $ || window.jQuery;
 
     t.fireCallback = t.fireCallback || _fireCallback;
 
-    initOptions = initOptions || {};
 
     function initLibrary() {
         var libPaths = initOptions["libPaths"] || {};
