@@ -444,7 +444,7 @@ function libJlwUtility(initOptions, $) {
 			if (!$o[0]) {
 				$o = $("select[name=" + i + "]", oFrm);
 			}
-			if (!o[0]) {
+			if (!$o[0]) {
 				$o = $("textarea[name=" + i + "]", oFrm);
 			}
 
@@ -452,7 +452,7 @@ function libJlwUtility(initOptions, $) {
 				if ($o.prop('type') == 'checkbox') {
 					$o.prop("checked", oData[i]);
 					$o.data('origValue', $o.val());
-				} else if (o.prop('type') == 'radio') {
+				} else if ($o.prop('type') == 'radio') {
 					s = (oData[i] ? oData[i].toString() : '');
                     $o.each(function (i, elem) {
                         var $rdo = $(elem);
