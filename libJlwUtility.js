@@ -26,7 +26,7 @@ function libJlwUtility(initOptions, $) {
         t.showPleaseWait = _showPleaseWait;
 		t.hidePleaseWait = _hidePleaseWait;
 
-		_$pleaseWaitDiv = $('<div class="modal fade jlwPleaseWait" data-backdrop="static" tabindex="-1" role="dialog"><div class="modal-dialog modal-dialog-centered" role="document"><div class="modal-content"><div class="modal-body"><div class="text-center"><div class="progress"><div class="progress-bar progress-bar-striped progress-bar-info progress-bar-animated" role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 100%"></div></div><h4><span>Processing... </span> <button type="button" class="btn-close" style="float: none;" data-dismiss="modal" aria-hidden="true"><small>x</small></button></h4></div></div></div></div></div>');
+		_$pleaseWaitDiv = $('<div class="modal fade jlwPleaseWait" data-backdrop="static" tabindex="-1" role="dialog"><div class="modal-dialog modal-dialog-centered" role="document"><div class="modal-content"><div class="modal-body"><div class="text-center"><div class="progress"><div class="progress-bar progress-bar-striped progress-bar-info progress-bar-animated" role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 100%"></div></div><h4><span>Processing... </span> <button type="button" class="btn-close btn-sm" style="float: none;" data-dismiss="modal" aria-label="Close"></button></h4></div></div></div></div></div>');
 		_$pleaseWaitDiv.off().on('click', function () { t.hidePleaseWait(); })
 
 		t.pleaseWaitDiv = _$pleaseWaitDiv;
@@ -134,8 +134,8 @@ function libJlwUtility(initOptions, $) {
 		var data = {};
 
 		$(frmData).each(function (i, o) {
-			if (data[o.name] && t.serializeMultipleCallback) {
-				if (!jQuery.isArray(data[o.name])) {
+			if (data[o.name] && t.serializeMultipleFieldCallback) {
+				if (!$.isArray(data[o.name])) {
 					data[o.name] = [data[o.name]];
 				}
 				data[o.name].push(o.value);
@@ -145,8 +145,8 @@ function libJlwUtility(initOptions, $) {
 		});
 
 		if (typeof t.serializeMultipleFieldCallback == 'function') {
-				// Re-process arrays
-			t.serializeMultipleFieldCallback(frmData, data)
+            // Re-process arrays
+            t.serializeMultipleFieldCallback(frmData, data);
         }
 
 
