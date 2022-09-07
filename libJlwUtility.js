@@ -135,7 +135,7 @@ function libJlwUtility(initOptions, $) {
 
 		$(frmData).each(function (i, o) {
 			if (data[o.name] && t.serializeMultipleCallback) {
-				if (!jQuery.isArray(data[o.name])) {
+				if (!$.isArray(data[o.name])) {
 					data[o.name] = [data[o.name]];
 				}
 				data[o.name].push(o.value);
@@ -145,8 +145,8 @@ function libJlwUtility(initOptions, $) {
 		});
 
 		if (typeof t.serializeMultipleFieldCallback == 'function') {
-				// Re-process arrays
-			t.serializeMultipleFieldCallback(frmData, data)
+            // Re-process arrays
+            t.serializeMultipleFieldCallback(frmData, data);
         }
 
 
