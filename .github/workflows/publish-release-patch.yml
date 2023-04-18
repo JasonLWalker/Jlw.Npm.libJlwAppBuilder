@@ -32,16 +32,16 @@ jobs:
              git config --global user.email '${{ secrets.GIT_USER_EMAIL }}'
              git config --global user.name '${{ secrets.GIT_USER_NAME }}'
         
-      - name: Publish to Npm
+      - name: Configure before publish
         run: |
              cd libJlwAppBuilder
              npm update
              cp ./node_modules/@${{ secrets.NPM_USER }}/jlwutility/*.js ./
              rm -rf ./node_modules
              npm run production
+             cd ..
              git add .
              git commit -a -m "updated jlwUtility script from npm" --allow-empty
-             npm publish --access public
         env:
              NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
              
@@ -50,11 +50,12 @@ jobs:
       #  env:
       #    NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         
-      #- name: Publish to npm
-      #  run: |
-      #      npm publish --access public
-      #  env:
-      #      NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: Publish to npm
+        run: |
+             cd libJlwAppBuilder
+             npm publish --access public
+        env:
+            NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Configure Node.Js
         uses: actions/setup-node@v1
@@ -63,6 +64,8 @@ jobs:
           scope: ${{ secrets.GPR_USER }}
       
       - name: Publish to GPR
-        run: npm publish
+        run:  |
+              cd libJlwAppBuilder
+              npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GPR_TOKEN }}        
