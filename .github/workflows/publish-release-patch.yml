@@ -32,7 +32,7 @@ jobs:
              git config --global user.email '${{ secrets.GIT_USER_EMAIL }}'
              git config --global user.name '${{ secrets.GIT_USER_NAME }}'
         
-      - name: Clean up package before publish
+      - name: Publish to Npm
         run: |
              cd libJlwAppBuilder
              npm update
@@ -41,16 +41,20 @@ jobs:
              npm run production
              git add .
              git commit -a -m "updated jlwUtility script from npm" --allow-empty
+             npm publish --access public
+        env:
+             NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
              
       #- name: Bump Version
       #  run: np patch --no-publish --branch=main
       #  env:
       #    NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         
-      - name: Publish to npm
-        run: npm publish --access public
-        env:
-            NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      #- name: Publish to npm
+      #  run: |
+      #      npm publish --access public
+      #  env:
+      #      NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Configure Node.Js
         uses: actions/setup-node@v1
