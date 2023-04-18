@@ -22,7 +22,8 @@ jobs:
           access: public 
           registry-url: 'https://registry.npmjs.org'
          
-      - run: npm install --global np
+      #- run: |
+      #       npm install --global np
          
       - name: Checkout code
         uses: actions/checkout@v2
@@ -34,16 +35,18 @@ jobs:
         
       - name: Clean up package before publish
         run: |
+             cd libJlwAppBuilder
              npm update
              cp ./node_modules/@${{ secrets.NPM_USER }}/jlwutility/*.js ./
              rm -rf ./node_modules
+             npm run production
              git add .
              git commit -a -m "updated jlwUtility script from npm" --allow-empty
              
-      - name: Bump Version
-        run: np patch --no-publish --branch=main
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      #- name: Bump Version
+      #  run: np patch --no-publish --branch=main
+      #  env:
+      #    NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         
       - name: Publish to npm
         run: npm publish --access public
