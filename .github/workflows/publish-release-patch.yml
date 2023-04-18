@@ -36,6 +36,7 @@ jobs:
       - name: Clean up package before publish
         run: |
              cd libJlwAppBuilder
+             npm install
              npm update
              cp ./node_modules/@${{ secrets.NPM_USER }}/jlwutility/*.js ./
              rm -rf ./node_modules

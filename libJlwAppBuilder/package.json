@@ -30,10 +30,10 @@
     "@jasonlwalker/jlwutility"
   ],
   "devDependencies": {
-    "eslint": "^8.38.0"
+    "eslint": "^8.38.0",
+    "uglify-js": "^3.3.11"
   },
   "dependencies": {
-    "@jasonlwalker/jlwutility": "^1.1.9",
-    "uglify-js": "^3.3.11"
+    "@jasonlwalker/jlwutility": "^1.1.9"
   }
 }
