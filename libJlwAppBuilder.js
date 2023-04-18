@@ -227,7 +227,7 @@ function libJlwAppBuilder(sUrlRoot, sDtSelector, parentLib, jlwUtility, $, momen
     }
 
     function getButton(o) {
-        return '<button type="button" class="btn btn-sm ' + o.skin + " " + o.class + '"><i class="' + o.icon + '"></i>' + o.label + "</button>";
+        return '<button type="button" class="btn btn-sm ' + o.skin + " " + o.class + '"><span class="' + o.icon + '"></span>' + o.label + "</button>";
     }
 
     function addDtRowButton(sLabel, sBtnClass, sIconClass, sSkin, fnCallback) {
@@ -260,7 +260,7 @@ function libJlwAppBuilder(sUrlRoot, sDtSelector, parentLib, jlwUtility, $, momen
         var s = '';
         s += '<div class="text-center">';
         for (var k in row) { s += '<span class="d-none" data-name="' + k + '">' + row[k] + '</span>'; }
-        for (var n in aRowButtons) { s += t.getButton(aRowButtons[n]) + "&nbsp;"; }
+        for (var n in aRowButtons) { s += t.getButton(aRowButtons[n]); }
         s += "</div>";
         return s;
     }
