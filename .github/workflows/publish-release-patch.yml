@@ -29,8 +29,11 @@ jobs:
 
       - name: Configure Git user
         run: |
+             cd $(Build.SourcesDirectory)
+             git checkout $(Build.SourceBranchName)
              git config --global user.email '${{ secrets.GIT_USER_EMAIL }}'
              git config --global user.name '${{ secrets.GIT_USER_NAME }}'
+             git config pull.rebase false
         
       - name: Configure before publish
         run: |
@@ -41,7 +44,8 @@ jobs:
              npm run production
              cd ..
              git add .
-             git commit -a -m "updated jlwUtility script from npm" --allow-empty
+             git commit -a -m "updated jlwUtility script from npm and minified library" --allow-empty
+             git push origin $(Build.SourceBranchName)
         env:
              NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
              
