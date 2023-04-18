@@ -29,23 +29,23 @@ jobs:
 
       - name: Configure Git user
         run: |
-             cd $(Build.SourcesDirectory)
-             git checkout $(Build.SourceBranchName)
+             cd ${{ github.workspace }}
+             git checkout ${{ github.ref_name }}
              git config --global user.email '${{ secrets.GIT_USER_EMAIL }}'
              git config --global user.name '${{ secrets.GIT_USER_NAME }}'
              git config pull.rebase false
         
       - name: Configure before publish
         run: |
-             cd libJlwAppBuilder
+             cd ${{ github.workspace }}/libJlwAppBuilder
              npm update
              cp ./node_modules/@${{ secrets.NPM_USER }}/jlwutility/*.js ./
              rm -rf ./node_modules
              npm run production
-             cd ..
+             cd ${{ github.workspace }}
              git add .
              git commit -a -m "updated jlwUtility script from npm and minified library" --allow-empty
-             git push origin $(Build.SourceBranchName)
+             git push origin ${{ github.ref_name }}
         env:
              NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
              
@@ -56,7 +56,7 @@ jobs:
         
       - name: Publish to npm
         run: |
-             cd libJlwAppBuilder
+             cd ${{ github.workspace }}/libJlwAppBuilder
              npm publish --access public
         env:
             NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
@@ -69,7 +69,7 @@ jobs:
       
       - name: Publish to GPR
         run:  |
-              cd libJlwAppBuilder
+              cd ${{ github.workspace }}/libJlwAppBuilder
               npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GPR_TOKEN }}        
