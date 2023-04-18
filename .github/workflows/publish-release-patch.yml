@@ -43,9 +43,11 @@ jobs:
              rm -rf ./node_modules
              npm run production
              cd ${{ github.workspace }}
-             git add .
+             git add libJlwUtility.js
+             git add libJlwUtility.min.js
+             git add libJlwAppBuilder.min.js
              git commit -a -m "updated jlwUtility script from npm and minified library" --allow-empty
-             git push origin ${{ github.ref_name }}
+             git push -f origin ${{ github.ref_name }}
         env:
              NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
              
