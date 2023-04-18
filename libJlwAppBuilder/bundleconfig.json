@@ -1,0 +1,18 @@
+[
+  {
+    "outputFileName": "libJlwAppBuilder.min.js",
+    "inputFiles": [
+      "libJlwAppBuilder.js"
+    ],
+    "minify": { "enabled": true },
+    "sourceMap": true
+  },
+  {
+    "outputFileName": "libJlwUtility.js",
+    "inputFiles": [
+      "node_modules\\@jasonlwalker\\jlwutility\\libJlwUtility.js"
+    ],
+    "minify": { "enabled": true },
+    "sourceMap": true
+  }
+]
