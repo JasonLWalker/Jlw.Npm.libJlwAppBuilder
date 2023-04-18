@@ -5,6 +5,13 @@ VisualStudioVersion = 17.5.33530.505
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "libJlwAppBuilder", "libJlwAppBuilder\libJlwAppBuilder.esproj", "{358CFFD1-1586-493D-890C-CA4542C795A8}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Files", "Solution Files", "{036D3AA2-3000-4657-B8B0-E1F7E12BD137}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{46127DDB-6EE6-4F50-BEB2-037E74C280EC}"
+	ProjectSection(SolutionItems) = preProject
+		.github\workflows\publish-release-patch.yml = .github\workflows\publish-release-patch.yml
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -20,6 +27,9 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{46127DDB-6EE6-4F50-BEB2-037E74C280EC} = {036D3AA2-3000-4657-B8B0-E1F7E12BD137}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {98060666-F2ED-48BF-8206-657D560F08F5}
