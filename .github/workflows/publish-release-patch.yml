@@ -22,8 +22,7 @@ jobs:
           access: public 
           registry-url: 'https://registry.npmjs.org'
          
-      #- run: |
-      #       npm install --global np
+      - run: npm install --global uglify-js
          
       - name: Checkout code
         uses: actions/checkout@v2
@@ -36,7 +35,6 @@ jobs:
       - name: Clean up package before publish
         run: |
              cd libJlwAppBuilder
-             npm install
              npm update
              cp ./node_modules/@${{ secrets.NPM_USER }}/jlwutility/*.js ./
              rm -rf ./node_modules
