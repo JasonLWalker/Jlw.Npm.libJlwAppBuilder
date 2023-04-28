@@ -1,3 +1,10 @@
+/*!
+  * Jlw Utility Library 
+  * Copyright 2012-2023 Jason L Walker
+  * Licensed under MIT (https://github.com/JasonLWalker/Jlw.Npm.libJlwUtility/blob/main/LICENSE)
+  */
+
+
 function libJlwUtility(initOptions, $) {
     var _pleaseWaitDiv = {};
     var _messageTypes = {
@@ -26,12 +33,17 @@ function libJlwUtility(initOptions, $) {
         t.showPleaseWait = _showPleaseWait;
 		t.hidePleaseWait = _hidePleaseWait;
 
-		_$pleaseWaitDiv = $('<div class="modal fade jlwPleaseWait" data-backdrop="static" tabindex="-1" role="dialog"><div class="modal-dialog modal-dialog-centered" role="document"><div class="modal-content"><div class="modal-body"><div class="text-center"><div class="progress"><div class="progress-bar progress-bar-striped progress-bar-info progress-bar-animated" role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 100%"></div></div><h4><span>Processing... </span> <button type="button" class="btn-close btn-sm" style="float: none;" data-dismiss="modal" aria-label="Close"></button></h4></div></div></div></div></div>');
-		_$pleaseWaitDiv.off().on('click', function () { t.hidePleaseWait(); })
+		_$pleaseWaitDiv = $('<div class="modal fade jlwPleaseWait" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" role="dialog"><div class="modal-dialog modal-dialog-centered" role="document"><div class="modal-content"><div class="modal-body"><div class="text-center"><button type="button" class="btn-close " data-bs-dismiss="modal" aria-label="Close"></button><div class="h4"><span></span><div class="progress"><div class="progress-bar progress-bar-striped progress-bar-info progress-bar-animated" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 100%"></div></div></div></div></div></div></div></div>');
 
 		t.pleaseWaitDiv = _$pleaseWaitDiv;
 
+		t.language = {
+			pleaseWait: "Processing...",
+			notAuthorizedTitle: "Not Logged In",
+			notAuthorized: "Either you have not completely logged in or your session has expired. Please log in and try again.",
+			error: 'An error has occurred'
 
+		};
 		t.debounce = t.debounce || _debounce;
 		t.populateFormData = t.populateFormData || _populateFormData;
 		t.setModalOnTop = t.setModalOnTop || _setModalOnTop;
@@ -197,13 +209,15 @@ function libJlwUtility(initOptions, $) {
 	}
 
 	function _showPleaseWait(sMessage) {
-		if (sMessage == null) sMessage = "Processing...";
-		$("h4>span", t.pleaseWaitDiv).html(sMessage);
-		var $o = t.pleaseWaitDiv.appendTo("body").modal('show');
+		if (sMessage == null) sMessage = t.language["pleaseWait"];
+		$(".h4>span", t.pleaseWaitDiv).html(sMessage);
+		$('button.btn-close', t.pleaseWaitDiv).off().on('click', function () { t.hidePleaseWait(); });
+
+        var $o = t.pleaseWaitDiv.appendTo("body").modal('show');
 		$o.off("hidden.bs.modal").on("hidden.bs.modal", function (e) {
             window.setTimeout(function() {
                 $(".jlwPleaseWait").remove();
-            }, 100);
+            }, 10);
         });
 		t.setModalOnTop($o);
 	}
@@ -214,7 +228,7 @@ function libJlwUtility(initOptions, $) {
 	        if ($(".jlwPleaseWait")[0]) {
 	            _hidePleaseWait();
 	        }
-	    }, 500);
+	    }, 10);
 
 	    $(".jlwPleaseWait").modal("hide");
 	}
@@ -279,7 +293,7 @@ function libJlwUtility(initOptions, $) {
 			var loc = jqXhr.getResponseHeader("location");
 			if (loc) {
 				loc = loc.replace(/ReturnUrl=[\w\W]*$/i,'ReturnUrl='+encodeURIComponent(window.location.pathname));
-				fnAlert("Not Logged In", "Either you have not completely logged in or your session has expired. Please log in and try again.", loc);
+				fnAlert(t.language["notAuthorizedTitle"], t.language["notAuthorized"], loc);
 				return false;
 			}
 		}
@@ -315,7 +329,7 @@ function libJlwUtility(initOptions, $) {
 			switch (data["ExceptionType"].toLowerCase()) {
 				case "invalidloginexception":
 					t.hidePleaseWait();
-					fnAlert("Not Logged In", "Either you have not completely logged in or your session has expired. Please log in and try again.", baseUrl);
+					fnAlert(t.language["notAuthorizedTitle"], t.language["notAuthorized"], baseUrl);
 					return true;
 				case "invalidtokenexception":
 					t.hidePleaseWait();
@@ -375,7 +389,7 @@ function libJlwUtility(initOptions, $) {
 		if (re.test(jqXhr.getResponseHeader("content-type"))) {
 			data = $.parseJSON(jqXhr.responseText);
 		} else {
-			data = { Message: jqXhr.status + " - " + textStatus + ": " + errorThrown, MessageType: t.messageTypes.Danger, 'Title': 'An error has occurred' }
+			data = { Message: jqXhr.status + " - " + textStatus + ": " + errorThrown, MessageType: t.messageTypes.Danger, 'Title': t.language["error"] }
 		}
 		t.checkAjaxMessage(data, textStatus, jqXhr);
 		t.hidePleaseWait();
