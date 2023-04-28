@@ -1,6 +1,6 @@
 {
   "name": "@jasonlwalker/jlwappbuilder",
-  "version": "1.0.27",
+  "version": "1.0.28",
   "description": "Utility library for building HTML5 web applications",
   "main": "libJlwAppBuilder.js",
   "author": {
@@ -8,7 +8,9 @@
   },
   "scripts": {
     "minifyJS": "uglifyjs libJlwAppBuilder.js --compress --mangle --warn --output libJlwAppBuilder.min.js",
-    "production": "npm run version:bump --silent && rm libJlwAppBuilder.min.js && npm run minifyJS --silent && npm run version:add --silent",
+    "msbuild": "npm config set script-shell 'C:\\Program Files\\git\\bin\\bash.exe' && npm run build",
+    "build": "npm run clean && npm update && cp ./node_modules/@jasonlwalker/jlwutility/*.js ./ && npm run version:bump --silent && rm -f libJlwAppBuilder.min.js && npm run minifyJS --silent && npm run version:add --silent",
+    "clean": "rm -f libJlwAppBuilder.min.js && rm -f libJlwUtility.* && rm -f package-lock.json",
     "version:add": "echo \"/* Jlw App Builder Library $(npm run version:extract --silent)\n* © Jason L Walker \n* Build time: $(date '+%m-%d-%Y %H:%M:%S')\n*/\n$(cat libJlwAppBuilder.min.js)\" > libJlwAppBuilder.min.js",
     "version:bump": "npm version patch --no-git-tag-version --silent",
     "version:extract": "cat package.json | grep version | head -1 | awk -F: '{ print $2 }' | sed 's/[\",]//g' | tr -d '[[:space:]]'"
@@ -34,6 +36,6 @@
     "uglify-js": "^3.3.11"
   },
   "dependencies": {
-    "@jasonlwalker/jlwutility": "^1.1.9"
+    "@jasonlwalker/jlwutility": "^1.1.11"
   }
 }

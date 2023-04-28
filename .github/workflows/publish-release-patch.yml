@@ -38,24 +38,15 @@ jobs:
       - name: Configure before publish
         run: |
              cd ${{ github.workspace }}/libJlwAppBuilder
-             npm update
-             cp ./node_modules/@${{ secrets.NPM_USER }}/jlwutility/*.js ./
-             rm -rf ./node_modules
-             npm run production
+             npm run build
              cd ${{ github.workspace }}
              git add libJlwAppBuilder/libJlwUtility.js
              git add libJlwAppBuilder/libJlwUtility.min.js
              git add libJlwAppBuilder/libJlwAppBuilder.min.js
              git commit -a -m "updated jlwUtility script from npm and minified library" --allow-empty
-             #git push -f origin ${{ github.ref_name }}
+             git push -f origin ${{ github.ref_name }}
         env:
-             NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-             
-      #- name: Bump Version
-      #  run: np patch --no-publish --branch=main
-      #  env:
-      #    NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-        
+             NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}        
       - name: Publish to npm
         run: |
              cd ${{ github.workspace }}/libJlwAppBuilder
