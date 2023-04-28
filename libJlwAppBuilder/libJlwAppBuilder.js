@@ -116,7 +116,7 @@ function libJlwAppBuilder(sUrlRoot, sDtSelector, parentLib, jlwUtility, $, momen
                     if (typeof fnOnShow === "function") {
                         fnOnShow(oFrm, o);
                     }
-                }, 500);
+                }, 10);
             });
     }
 
@@ -158,7 +158,7 @@ function libJlwAppBuilder(sUrlRoot, sDtSelector, parentLib, jlwUtility, $, momen
                     if (typeof fnOnShow === "function") {
                         fnOnShow(oFrm, o);
                     }
-                }, 500);
+                }, 10);
         }
         t.post(t.sUrlRoot + "Data", oData, onSuccessCallback);
     }
@@ -211,7 +211,7 @@ function libJlwAppBuilder(sUrlRoot, sDtSelector, parentLib, jlwUtility, $, momen
                 fnOnShow(oFrm, { });
             }
 
-        }, 500);
+        }, 10);
     }
 
 
