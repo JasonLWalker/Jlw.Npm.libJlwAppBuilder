@@ -1,6 +1,6 @@
 {
   "name": "@jasonlwalker/jlwappbuilder",
-  "version": "1.0.29",
+  "version": "1.0.31",
   "description": "Utility library for building HTML5 web applications",
   "main": "libJlwAppBuilder.js",
   "author": {
@@ -36,6 +36,6 @@
     "uglify-js": "^3.3.11"
   },
   "dependencies": {
-    "@jasonlwalker/jlwutility": "^1.1.16"
+    "@jasonlwalker/jlwutility": "^1.2.11"
   }
 }
