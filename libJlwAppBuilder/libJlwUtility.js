@@ -15,10 +15,11 @@ function libJlwUtility (initOptions, $) { // eslint-disable-line no-unused-vars
 		Redirect: '5'
 	};
 
+
 	initOptions = initOptions || {};
 
 	var t = initOptions.this || this;
-	$ = $ || window.jQuery;
+	t.jQuery = $ || window.jQuery;
 
 	t.fireCallback = t.fireCallback || _fireCallback;
 
@@ -32,8 +33,9 @@ function libJlwUtility (initOptions, $) { // eslint-disable-line no-unused-vars
 		t.showPleaseWait = _showPleaseWait;
 		t.hidePleaseWait = _hidePleaseWait;
 		t.baseUrl = '';
+		
 
-		_$pleaseWaitDiv = $('<div class="modal fade jlwPleaseWait" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" role="dialog">' +
+		_$pleaseWaitDiv = t.jQuery('<div class="modal fade jlwPleaseWait" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" role="dialog">' +
 			'<div class="modal-dialog modal-dialog-centered" role="document">' +
 			'<div class="modal-content">' +
 			'<div class="modal-body">' +
@@ -65,12 +67,11 @@ function libJlwUtility (initOptions, $) { // eslint-disable-line no-unused-vars
 		t.redrawDataTable = t.redrawDataTable || _redrawDataTable;
 		t.showNotification = t.showNotification || _showNotification;
 		t.lazyLoadLibrary = t.lazyLoadLibrary || _lazyLoadLibrary;
+		t.lazyLoadStyle = t.lazyLoadStyle || _lazyLoadStyle;
 		t.getHighestZIndex = t.getHighestZIndex || _getHighestZIndex;
 		t.serializeMultipleFieldCallback = t.serializeMultipleFieldCallback || _fnSerializeMultipleFieldCallback;
 
-		var bs = (window.bootstrap && window.bootstrap['modal']);
-
-		t.promiseInitBootstrap = t.lazyLoadLibrary(bs, libPaths['Bootstrap']);
+		t.promiseInitBootstrap = t.lazyLoadLibrary((window.bootstrap && window.bootstrap['Modal']), libPaths['Bootstrap']);
 		t.promiseInitFontAwesome = t.lazyLoadLibrary(window.FontAwesome, libPaths['FontAwesome']);
 		t.promiseInitBootbox = t.lazyLoadLibrary(window.bootbox, libPaths['Bootbox']);
 		t.promiseInitToastr = t.lazyLoadLibrary(window.toastr, libPaths['Toastr']);
@@ -81,33 +82,58 @@ function libJlwUtility (initOptions, $) { // eslint-disable-line no-unused-vars
 	function initJquery(fnCb) {
 		var libPaths = initOptions['libPaths'] || {};
 
-		if (typeof $ == 'undefined' && libPaths['jQuery']) {
+		if (typeof t.jQuery == 'undefined' && libPaths['jQuery']) {
 			var headTag = document.getElementsByTagName('head')[0];
 			var jqTag = document.createElement('script');
 			jqTag.type = 'text/javascript';
 			jqTag.src = libPaths['jQuery'];
 			jqTag.onload = function () {
-				$ = window.jQuery;
-				t.promiseInitJquery = $.Deferred().resolve();
+				t.jQuery = window.jQuery;
+				t.promiseInitJquery = t.jQuery.Deferred().resolve();
 				t.fireCallback(fnCb);
 			};
 			headTag.appendChild(jqTag);
 		} else {
-			if (typeof $ != 'undefined') {
-				t.promiseInitJquery = $.Deferred().resolve();
+			if (typeof t.jQuery != 'undefined') {
+				t.promiseInitJquery = t.jQuery.Deferred().resolve();
 			}
 			t.fireCallback(fnCb);
 		}
 	}
 
-	function _lazyLoadLibrary(libToCheck, libPath) {
+	function _lazyLoadStyle(filePath) {
+		var sFileToCheck = (filePath || '').replace(/^.*[/]([^/]*\.(?:min)?\.css).*$/i, '$1');
+		var sMinFile = (sFileToCheck || ''); 
+		var sFile = (sFileToCheck || '');
+		if (!filePath || (typeof filePath != 'string'))
+			return t.jQuery.Deferred().fail();
+
+		if (!sMinFile.includes('.min.css'))
+			sMinFile = sMinFile.replace('.css', '.min.css');
+
+		if (sFile.includes('.min.css'))
+			sFile = sFile.replace('.min.css', '.css');
+
+		if (!(t.jQuery('link[href*="' + sMinFile + '"]').length > 0 || t.jQuery('link[href*="' + sFile + '"]').length > 0)) {
+			t.jQuery('head').append(t.jQuery('<link rel="stylesheet" type="text/css" />').attr('href', filePath));
+		}
+		return t.jQuery.Deferred().resolve();
+	}
+
+	function _lazyLoadLibrary(libToCheck, libPath, options) {
 		if (libToCheck)
-			return $.Deferred().resolve;
+			return t.jQuery.Deferred().resolve;
 
 		if (typeof libPath == 'string') {
-			return $.getScript(libPath);
+			//return t.jQuery.getScript(libPath);
+			var opts = t.jQuery.extend(options || { cache: true }, {
+				url: libPath,
+				dataType: 'script'
+			});
+
+			return t.jQuery.ajax(opts);
 		}
-		return $.Deferred().fail();
+		return t.jQuery.Deferred().fail();
 	}
 
 	function _fireCallback(fnCb) {
@@ -146,11 +172,11 @@ function libJlwUtility (initOptions, $) { // eslint-disable-line no-unused-vars
 	}
 
 	function _serializeFormToJson(oFrm) {
-		var $a = $('input, select, textarea', oFrm);
+		var $a = t.jQuery('input, select, textarea', oFrm);
 
 		// Temporarily remove disabled properties so that values can be serialized.
 		$a.each(function (i, elem) {
-			var $o = $(elem);
+			var $o = t.jQuery(elem);
 			$o.data('jlwIsDisabled', $o.prop('disabled'));
 			$o.attr('disabled', false);
 		});
@@ -158,9 +184,9 @@ function libJlwUtility (initOptions, $) { // eslint-disable-line no-unused-vars
 		var frmData = $a.serializeArray();
 		var data = {};
 
-		$(frmData).each(function(i, o) {
+		t.jQuery(frmData).each(function(i, o) {
 			if (data[o.name] && t.serializeMultipleFieldCallback) {
-				if (!$.isArray(data[o.name])) {
+				if (!t.jQuery.isArray(data[o.name])) {
 					data[o.name] = [data[o.name]];
 				}
 				data[o.name].push(o.value);
@@ -177,7 +203,7 @@ function libJlwUtility (initOptions, $) { // eslint-disable-line no-unused-vars
 
 		// Re-enable disabled properties if set
 		$a.each(function (i, elem) {
-			var $o = $(elem);
+			var $o = t.jQuery(elem);
 			$o.prop('disabled', $o.data('jlwIsDisabled'));
 		});
 
@@ -185,8 +211,8 @@ function libJlwUtility (initOptions, $) { // eslint-disable-line no-unused-vars
 	}
 
 	function _fnSerializeMultipleFieldCallback(frmData, data) {
-		$(frmData).each(function (i, o) {
-			if ($.isArray(data[o.name])) {
+		t.jQuery(frmData).each(function (i, o) {
+			if (t.jQuery.isArray(data[o.name])) {
 				var arry = data[o.name];
 				var key = o.name;
 				data[key] = '';
@@ -200,8 +226,8 @@ function libJlwUtility (initOptions, $) { // eslint-disable-line no-unused-vars
 	function _getHighestZIndex($obj) {
 		var highest = -999;
 
-		$('*').each(function () {
-			var $o = $(this);
+		t.jQuery('*').each(function () {
+			var $o = t.jQuery(this);
 			var current = parseInt($o.css('z-index'), 10);
 			if (current && highest < current && $o != $obj)
 				highest = current;
@@ -224,28 +250,36 @@ function libJlwUtility (initOptions, $) { // eslint-disable-line no-unused-vars
 	}
 
 	function _showPleaseWait(sMessage) {
-		if (sMessage == null) sMessage = t.language['pleaseWait'];
-		$('.h4>span', t.pleaseWaitDiv).html(sMessage);
-		$('button.btn-close', t.pleaseWaitDiv).off().on('click', function () { t.hidePleaseWait(); });
+		if (!(t.jQuery && t.jQuery.fn && t.jQuery.fn['modal']))
+			return;
 
-		var $o = t.pleaseWaitDiv.appendTo('body').modal('show');
+		if (sMessage == null) sMessage = t.language['pleaseWait'];
+		t.jQuery('.h4>span', t.pleaseWaitDiv).html(sMessage);
+		t.jQuery('button.btn-close', t.pleaseWaitDiv).off().on('click', function () { t.hidePleaseWait(); });
+
+		var $o = t.pleaseWaitDiv.appendTo('body');
 		$o.off('hidden.bs.modal').on('hidden.bs.modal', function () {
-			window.setTimeout(function () {
-				$('.jlwPleaseWait').remove();
-			}, 10);
+			t.jQuery('.modal.jlwPleaseWait').remove();
 		});
-		t.setModalOnTop($o);
+		$o.off('shown.bs.modal').on('shown.bs.modal', function () {
+			t.setModalOnTop($o);
+		});
+
+		window.setTimeout(function () {
+			$o.modal('show');
+		}, 10);
 	}
 
 	function _hidePleaseWait() {
-		window.setTimeout(function () {
-			// set up timeout since animation doesn't always fire events correctly.
-			if ($('.jlwPleaseWait')[0]) {
-				_hidePleaseWait();
-			}
-		}, 10);
+		if (!(t.jQuery && t.jQuery.fn && t.jQuery.fn['modal']))
+			return;
+		var $o = t.jQuery('.jlwPleaseWait');
+		// Set shown event since it will ignore if it is in transition
+		$o.off('shown.bs.modal').on('shown.bs.modal', function () {
+			$o.modal('hide');
+		});
+		$o.modal('hide');
 
-		$('.jlwPleaseWait').modal('hide');
 	}
 
 	function _showNotification(title, msg, type, redirectUrl) {
@@ -396,7 +430,7 @@ function libJlwUtility (initOptions, $) { // eslint-disable-line no-unused-vars
 		var data = null;
 		var re = new RegExp('application/json', 'i');
 		if (re.test(jqXhr.getResponseHeader('content-type'))) {
-			data = $.parseJSON(jqXhr.responseText);
+			data = t.jQuery.parseJSON(jqXhr.responseText);
 		} else {
 			data = { Message: jqXhr.status + ' - ' + textStatus + ': ' + errorThrown, MessageType: t.messageTypes.Danger, 'Title': t.language['error'] };
 		}
@@ -418,10 +452,10 @@ function libJlwUtility (initOptions, $) { // eslint-disable-line no-unused-vars
 		url = url + (-1 === url.indexOf('?') ? '?' : '&') + '__=' + Number(new Date());
 
 		if (!data) {
-			return $.getJSON(url).done(fnCallback).fail(fail);
+			return t.jQuery.getJSON(url).done(fnCallback).fail(fail);
 		}
 		else
-			return $.ajax({ url: url, type: 'GET', contentType: 'application/json', data: JSON.stringify(data), cache: false }).done(fnCallback).fail(fail);
+			return t.jQuery.ajax({ url: url, type: 'GET', contentType: 'application/json', data: JSON.stringify(data), cache: false }).done(fnCallback).fail(fail);
 	}
 
 	function _ajaxPost(url, data, callback, fail) {
@@ -437,9 +471,9 @@ function libJlwUtility (initOptions, $) { // eslint-disable-line no-unused-vars
 		url = url + (-1 === url.indexOf('?') ? '?' : '&') + '__=' + Number(new Date());
 
 		if (!data)
-			return $.ajax({ url: url, type: 'POST', contentType: 'application/json', cache: false }).done(fnCallback).fail(fail);
+			return t.jQuery.ajax({ url: url, type: 'POST', contentType: 'application/json', cache: false }).done(fnCallback).fail(fail);
 		else
-			return $.ajax({ url: url, type: 'POST', contentType: 'application/json', data: JSON.stringify(data), cache: false }).done(fnCallback).fail(fail);
+			return t.jQuery.ajax({ url: url, type: 'POST', contentType: 'application/json', data: JSON.stringify(data), cache: false }).done(fnCallback).fail(fail);
 	}
 
 	function _debounce(fn, delay) {
@@ -457,18 +491,18 @@ function libJlwUtility (initOptions, $) { // eslint-disable-line no-unused-vars
 		var $o = [];
 		var s = '';
 		// Empty Form Data
-		$o = $('input:not([type=radio])', oFrm).val('');
-		$o = $('select', oFrm).val('');
-		$o = $('textarea', oFrm).val('');
-		$o = $('input[type=checkbox]', oFrm).val('1').prop('checked', false);
+		$o = t.jQuery('input:not([type=radio])', oFrm).val('');
+		$o = t.jQuery('select', oFrm).val('');
+		$o = t.jQuery('textarea', oFrm).val('');
+		$o = t.jQuery('input[type=checkbox]', oFrm).val('1').prop('checked', false);
 		// Populate Form Fields
 		for (var i in oData) {
-			$o = $('input[name=' + i + ']', oFrm);
+			$o = t.jQuery('input[name=' + i + ']', oFrm);
 			if (!$o[0]) {
-				$o = $('select[name=' + i + ']', oFrm);
+				$o = t.jQuery('select[name=' + i + ']', oFrm);
 			}
 			if (!$o[0]) {
-				$o = $('textarea[name=' + i + ']', oFrm);
+				$o = t.jQuery('textarea[name=' + i + ']', oFrm);
 			}
 
 			if ($o[0]) {
@@ -478,7 +512,7 @@ function libJlwUtility (initOptions, $) { // eslint-disable-line no-unused-vars
 				} else if ($o.prop('type') == 'radio') {
 					s = (oData[i] ? oData[i].toString() : '');
 					$o.each(function (i, elem) {
-						var $rdo = $(elem);
+						var $rdo = t.jQuery(elem);
 						$rdo.prop('checked', $rdo.val() == s);
 					});
 				} else {
@@ -492,11 +526,11 @@ function libJlwUtility (initOptions, $) { // eslint-disable-line no-unused-vars
 	}
 
 	function _redrawDataTable(selector) {
-		$(selector)
+		t.jQuery(selector)
 			.each(function (i, o) {
 				try {
-					var id = $(o).prop('id');
-					var dt = $('#' + id).DataTable();
+					var id = t.jQuery(o).prop('id');
+					var dt = t.jQuery('#' + id).DataTable();
 					dt.draw(t.redrawDataTableType);
 				} catch (ex) {
 					// Do Nothing
